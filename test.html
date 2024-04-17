@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Testing</title>
+</head>
+<body>
+  <h3>Registro de vehículos</h3>
+  <input type="text" placeholder="Placa" id="inputPlaca">
+  <input type="text" placeholder="Marca" id="inputMarca">
+  <input type="text" placeholder="Modelo" id="inputModelo">
+  <button id="btnAdd">Agregar</button>
+  <button id="btnList">Listar</button>
+  <button id="btnSearch">Buscar placa</button>
+  <button id="btnDel">Eliminar</button>
+
+  <script>
+    const btnList = document.getElementById('btnList');
+    const btnAdd = document.getElementById('btnAdd');
+    const btnDel = document.getElementById('btnDel');
+    const btnSearch = document.getElementById('btnSearch');
+
+    btnList.addEventListener('click', () => {
+      fetch('http://localhost:3000/vehiculos')
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+    });
+
+    btnAdd.addEventListener('click', () => {
+      const placa = document.getElementById('inputPlaca').value;
+      const marca = document.getElementById('inputMarca').value;
+      const modelo = document.getElementById('inputModelo').value;
+
+      fetch('http://localhost:3000/vehiculos', {
+        method: 'POST',
+        body: JSON.stringify({
+          vehiculo: {
+            placa: placa,
+            marca: marca,
+            modelo: modelo,
+          },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+    });
+
+    btnDel.addEventListener('click', () => {
+      const id = document.getElementById('inputPlaca').value; // Assuming placa is the ID
+      fetch('http://localhost:3000/vehiculos/' + id, {
+        method: 'DELETE',
+      })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+    });
+
+    btnSearch.addEventListener('click', () => {
+  const placa = document.getElementById('inputPlaca').value;
+  fetch('http://localhost:3000/vehiculos/' + placa)
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('No se encontró el vehículo');
+    }
+  })
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error.message));
+});
+
+  </script>
+</body>
+</html>
